@@ -4,7 +4,7 @@ from tensorflow.keras.models import load_model
 
 # Read Model Weights
 def initializePredictionModel():
-    model = load_model("myModel.h5")
+    model = load_model("./Resources/myModel.h5")
     return model
 
 
