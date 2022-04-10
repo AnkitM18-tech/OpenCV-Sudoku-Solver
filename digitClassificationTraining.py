@@ -56,3 +56,21 @@ plt.title("Number Of Images for each Class")
 plt.xlabel("Class ID")
 plt.ylabel("Number Of Images")
 plt.show()
+
+def preProcessing(img):
+    img = cv2.cvtColor(img,cv2.COLOR_BGR2GRAY)
+    img = cv2.equalizeHist(img)
+    img = img/255
+    return img
+
+# Mapping the function to items in the array
+x_train = np.array(list(map(preProcessing,x_train)))
+x_test = np.array(list(map(preProcessing,x_test)))
+x_validation = np.array(list(map(preProcessing,x_validation)))
+
+# Reshaping the arrays, adding extra depth
+x_train = x_train.reshape(x_train.shape[0],x_train.shape[1],x_train.shape[2],1)
+x_test = x_test.reshape(x_test.shape[0],x_test.shape[1],x_test.shape[2],1)
+x_validation = x_validation.reshape(x_validation.shape[0],x_validation.shape[1],x_validation.shape[2],1)
+
+# Augmentation to make the dataset more generic
