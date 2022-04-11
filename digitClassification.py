@@ -11,8 +11,9 @@ cap = cv2.VideoCapture(0)
 cap.set(3,width)
 cap.set(4,height)
 
-model = pickle.load(open("./Resources/myModel.pkl","rb"))
-# model = load_model("./Resources/myModel.h5")
+# model = pickle.load(open("./Resources/myModel.pkl","rb"))
+model = load_model("./Resources/myModel.h5")
+# model = load_model("./myModel.h5")
 # model = pickle.load(open("./model_trained_10.p","rb"))
 
 def preProcess(img):
@@ -29,14 +30,14 @@ while True:
     # cv2.imshow("Processed Image",img)
     img = img.reshape(1,32,32,1)
     # Predict
-    classIndex = np.argmax(model.predict(img), axis=1)
+    classIndex = model.predict(img).argmax(axis=-1)[0]
     print(classIndex)
     predictions = model.predict(img)
     probVal = np.amax(predictions)
     print(probVal)
 
     if probVal > threshold:
-        cv2.putText(imgOriginal,str(classIndex[0]) + " " + str(round(probVal*100,2)),(50,50),cv2.FONT_HERSHEY_COMPLEX,1,(0,255,255),1)
+        cv2.putText(imgOriginal,str(classIndex) + " " + str(round(probVal*100,2)),(50,50),cv2.FONT_HERSHEY_COMPLEX,1,(255,0,0),1)
 
     cv2.imshow("Original Image",imgOriginal)
     if cv2.waitKey(1) & 0xFF == ord("q"):
