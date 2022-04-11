@@ -1,6 +1,6 @@
 import cv2
 import numpy as np
-from tensorflow.keras.models import load_model
+from keras.models import load_model
 
 # Read Model Weights
 def initializePredictionModel():
@@ -28,7 +28,7 @@ def reorder(myPoints):
     return myPointsNew
 
 # Function to stack images
-def stackImages(scale,imgArray):
+def stackImages(imgArray,scale):
     rows = len(imgArray)
     cols = len(imgArray[0])
     rowsAvailable = isinstance(imgArray[0], list)
