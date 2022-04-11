@@ -7,6 +7,7 @@ from keras.preprocessing.image import ImageDataGenerator
 from keras.utils.np_utils import to_categorical
 from keras.models import Sequential
 from keras.layers import Dense
+from keras.models import save_model
 from tensorflow.keras.optimizers import Adam
 from keras.layers import Dropout,Flatten
 from keras.layers.convolutional import Conv2D,MaxPooling2D
@@ -19,8 +20,9 @@ valRatio = 0.2
 imageDimensions = (32,32,3)
 batchSizeValue = 50
 epochsValue = 10
-stepsPerEpoch = 2000
+# stepsPerEpoch = 2000
 
+count = 0
 images = []
 classNo = []
 myList = os.listdir(path)
@@ -29,11 +31,11 @@ noOfClasses = len(myList)
 print("Importing Classes...")
 
 # Adding Images and Class No to arrays
-for x in range(noOfClasses):
+for x in range(0,noOfClasses):
     myPicList = os.listdir(path + "/" + str(x))
     for y in myPicList:
         currentImage = cv2.imread(path + "/" + str(x) + "/" + y)
-        currentImage = cv2.resize(currentImage,(imageDimensions[0],imageDimensions[1]))
+        currentImage = cv2.resize(currentImage,(32,32))
         images.append(currentImage)
         classNo.append(x)
     print(x,end=" ")
@@ -56,7 +58,7 @@ x_train,x_validation,y_train,y_validation = train_test_split(x_train,y_train,tes
 # print(x_validation.shape)
 
 numOfSamples = []
-for x in range(noOfClasses):
+for x in range(0,noOfClasses):
     # print(len(np.where(y_train == x)[0]))
     numOfSamples.append(len(np.where(y_train == x)[0]))
 print(numOfSamples)
@@ -103,11 +105,11 @@ def myModel():
     noOfNode = 500
 
     model = Sequential()
-    model.add(Conv2D(noOfFilters,sizeOfFilter1,input_shape=(imageDimensions[0],imageDimensions[1],1),activation="relu"))
-    model.add(Conv2D(noOfFilters,sizeOfFilter1,activation="relu"))
-    model.add(MaxPooling2D(pool_size=sizeOfPool))
-    model.add(Conv2D(noOfFilters//2,sizeOfFilter2,activation="relu"))
-    model.add(Conv2D(noOfFilters//2,sizeOfFilter2,activation="relu"))
+    model.add((Conv2D(noOfFilters,sizeOfFilter1,input_shape=(imageDimensions[0],imageDimensions[1],1),activation="relu")))
+    model.add((Conv2D(noOfFilters,sizeOfFilter1,activation="relu")))
+    model.add((MaxPooling2D(pool_size=sizeOfPool)))
+    model.add((Conv2D(noOfFilters//2,sizeOfFilter2,activation="relu")))
+    model.add((Conv2D(noOfFilters//2,sizeOfFilter2,activation="relu")))
     model.add(MaxPooling2D(pool_size=sizeOfPool))
     model.add(Dropout(0.5)) #handling overfitting
     model.add(Flatten())
@@ -122,7 +124,7 @@ model = myModel()
 print(model.summary())
 
 # Starting the training Process
-history = model.fit(dataGen.flow(x_train,y_train,batch_size=batchSizeValue),epochs=epochsValue,validation_data=(x_validation,y_validation),shuffle=1)
+history = model.fit(dataGen.flow(x_train,y_train,batch_size=batchSizeValue),steps_per_epoch=len(x_train)//batchSizeValue,epochs=epochsValue,validation_data=(x_validation,y_validation),shuffle=1)
 
 # Plot the results 
 plt.figure(1)
@@ -145,6 +147,6 @@ print('Test Score = ',score[0])
 print('Test Accuracy =', score[1])
 
 # Save the trained model
-pickle_out= open("./Resources/myModel.h5", "wb")
+pickle_out= open("./Resources/myModel.pkl", "wb")
 pickle.dump(model,pickle_out)
-pickle_out.close()
+model.save("./Resources/myModel.h5")
