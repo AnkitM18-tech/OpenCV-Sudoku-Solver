@@ -7,7 +7,7 @@ from keras.preprocessing.image import ImageDataGenerator
 from keras.utils.np_utils import to_categorical
 from keras.models import Sequential
 from keras.layers import Dense
-from keras.optimizers import Adam
+from tensorflow.keras.optimizers import Adam
 from keras.layers import Dropout,Flatten
 from keras.layers.convolutional import Conv2D,MaxPooling2D
 import pickle
@@ -17,6 +17,9 @@ path = "./myData"
 testRatio = 0.2
 valRatio = 0.2
 imageDimensions = (32,32,3)
+batchSizeValue = 50
+epochsValue = 10
+stepsPerEpoch = 2000
 
 images = []
 classNo = []
@@ -111,5 +114,37 @@ def myModel():
     model.add(Dense(noOfNode,activation="relu"))
     model.add(Dropout(0.5))
     model.add(Dense(noOfClasses,activation="softmax"))
-    model.compile(Adam(lr=0.001),loss="categorical_crossentropy",metrics=["accuracy"])
+    model.compile(Adam(learning_rate=0.001),loss="categorical_crossentropy",metrics=["accuracy"])
     return model
+
+# Creating model
+model = myModel()
+print(model.summary())
+
+# Starting the training Process
+history = model.fit(dataGen.flow(x_train,y_train,batch_size=batchSizeValue),epochs=epochsValue,validation_data=(x_validation,y_validation),shuffle=1)
+
+# Plot the results 
+plt.figure(1)
+plt.plot(history.history['loss'])
+plt.plot(history.history['val_loss'])
+plt.legend(['training','validation'])
+plt.title('Loss')
+plt.xlabel('epoch')
+plt.figure(2)
+plt.plot(history.history['accuracy'])
+plt.plot(history.history['val_accuracy'])
+plt.legend(['training','validation'])
+plt.title('Accuracy')
+plt.xlabel('epoch')
+plt.show()
+
+# Evaluate using Test Images
+score = model.evaluate(x_test,y_test,verbose=0)
+print('Test Score = ',score[0])
+print('Test Accuracy =', score[1])
+
+# Save the trained model
+pickle_out= open("./Resources/myModel.h5", "wb")
+pickle.dump(model,pickle_out)
+pickle_out.close()
