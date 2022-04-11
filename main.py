@@ -4,9 +4,9 @@ os.environ["TF_CPP_MIN_LOG_LEVEL"] = "3"
 from utils import *
 import sudokuSolver
 
-pathImage = "./Resources/3.jpg"
-heightImg = 450
-widthImg = 450
+pathImage = "./Resources/1.png"
+heightImg = 360
+widthImg = 360
 model = initializePredictionModel()  #initialize the cnn model
 
 # Prepare the Image
@@ -67,7 +67,7 @@ if biggest.size != 0:
     imgSolvedDigits = drawGrid(imgSolvedDigits)
 
     imageArray = ([img,imgThreshold,imgContours,imgBigContour],
-                    [imgWarpColored,imgDetectedDigits,imgSolvedDigits,inv_perspective])
+                    [imgDetectedDigits,imgSolvedDigits,imgInvWarpColored,inv_perspective])
     stackedImage = stackImages(imageArray,1)
     cv2.imshow("Stacked Images",stackedImage)
 else:

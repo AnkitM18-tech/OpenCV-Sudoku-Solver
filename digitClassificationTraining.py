@@ -19,7 +19,7 @@ testRatio = 0.2
 valRatio = 0.2
 imageDimensions = (32,32,3)
 batchSizeValue = 50
-epochsValue = 10
+epochsValue = 15
 # stepsPerEpoch = 2000
 
 count = 0
@@ -53,9 +53,9 @@ classNo = np.array(classNo)
 x_train,x_test,y_train,y_test = train_test_split(images,classNo,test_size=testRatio)
 x_train,x_validation,y_train,y_validation = train_test_split(x_train,y_train,test_size=valRatio)
 
-# print(x_train.shape)
-# print(x_test.shape)
-# print(x_validation.shape)
+print(x_train.shape)
+print(x_test.shape)
+print(x_validation.shape)
 
 numOfSamples = []
 for x in range(0,noOfClasses):
@@ -111,7 +111,7 @@ def myModel():
     model.add((Conv2D(noOfFilters//2,sizeOfFilter2,activation="relu")))
     model.add((Conv2D(noOfFilters//2,sizeOfFilter2,activation="relu")))
     model.add(MaxPooling2D(pool_size=sizeOfPool))
-    model.add(Dropout(0.5)) #handling overfitting
+    # model.add(Dropout(0.5)) #handling overfitting
     model.add(Flatten())
     model.add(Dense(noOfNode,activation="relu"))
     model.add(Dropout(0.5))
@@ -124,7 +124,7 @@ model = myModel()
 print(model.summary())
 
 # Starting the training Process
-history = model.fit(dataGen.flow(x_train,y_train,batch_size=batchSizeValue),steps_per_epoch=len(x_train)//batchSizeValue,epochs=epochsValue,validation_data=(x_validation,y_validation),shuffle=1)
+history = model.fit(dataGen.flow(x_train,y_train,batch_size=batchSizeValue),epochs=epochsValue,validation_data=(x_validation,y_validation),shuffle=True)
 
 # Plot the results 
 plt.figure(1)
